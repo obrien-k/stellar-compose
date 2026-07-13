@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: write
+  # rebased commits from upstream can touch workflow YAML (e.g. the
+  # actions/checkout pin bump); without this the push is rejected.
+  workflows: write
 
 jobs:
   sync:
