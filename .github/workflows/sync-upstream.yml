@@ -7,19 +7,21 @@ on:
 
 permissions:
   contents: write
-  # rebased commits from upstream can touch workflow YAML (e.g. the
-  # actions/checkout pin bump); without this the push is rejected.
-  workflows: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # GITHUB_TOKEN can never push changes to .github/workflows/* (GitHub
+      # blocks this unconditionally, regardless of `permissions:`, to stop a
+      # workflow from escalating itself). Rebased upstream commits routinely
+      # touch workflow YAML, so this job needs a PAT with the `workflow`
+      # scope instead — set as the SYNC_PAT repo secret.
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: main
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SYNC_PAT }}
 
       - name: Configure git
         run: |
